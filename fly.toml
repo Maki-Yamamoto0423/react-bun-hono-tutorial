@@ -1,0 +1,23 @@
+app = "react-bun-hono-tutorial"
+primary_region = "nrt"  # 東京リージョン
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "3000"
+  NODE_ENV = "production"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_start_machines = true
+  auto_stop_machines = true
+  min_machines_running = 0
+
+[[http_service.checks]]
+  method = "get"
+  path = "/api/expenses/total-spent"
+  interval = "30s"
+  timeout = "10s"
+  grace_period = "5s"
