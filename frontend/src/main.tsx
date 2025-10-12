@@ -5,14 +5,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 
-// ルートツリーをインポート
-import { routeTree } from './routeTree.gen';
-
 // QueryClientを作成
 const queryClient = new QueryClient();
 
+// ルートツリーをインポート
+import { routeTree } from './routeTree.gen';
+
 // ルーターを作成
-const router = createRouter({ routeTree });
+const router = createRouter({ routeTree, context: { queryClient } });
 
 // TypeScriptの型安全性のための宣言
 declare module '@tanstack/react-router' {

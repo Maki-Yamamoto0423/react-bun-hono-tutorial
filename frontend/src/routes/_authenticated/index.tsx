@@ -3,6 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { api } from '@/lib/api';
 
+export const Route = createFileRoute('/_authenticated/')({
+  component: Index,
+});
+
 async function getTotalSpent() {
   const res = await api.expenses['total-spent'].$get();
   if (!res.ok) {
@@ -30,7 +34,3 @@ function Index() {
     </Card>
   );
 }
-
-export const Route = createFileRoute('/')({
-  component: Index,
-});

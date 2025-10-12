@@ -1,6 +1,7 @@
 import { Hono } from 'hono'; // Webフレームワーク
 import { zValidator } from '@hono/zod-validator'; // バリデーター
 import { z } from 'zod'; // スキーマ検証ライブラリ
+import { getUser } from '../kinde';
 
 const expenseSchema = z.object({
   id: z.number().int().positive().min(1), // 支出ID
@@ -22,11 +23,12 @@ const fakeExpenses: Expense[] = [
 
 export const expensesRoute = new Hono()
   // GET：支出一覧取得　全ての支出データを JSON で返す
-  .get('/', c => {
+  .get('/', getUser, async c => {
+    const user = c.var.user;
     return c.json({ expenses: fakeExpenses });
   })
   // POST：新しい支出作成
-  .post('/', zValidator('json', createPostSchema), async c => {
+  .post('/', getUser, zValidator('json', createPostSchema), async c => {
     const data = await c.req.json();
     const expense = createPostSchema.parse(data);
     fakeExpenses.push({ ...expense, id: fakeExpenses.length + 1 });
@@ -34,12 +36,12 @@ export const expensesRoute = new Hono()
     return c.json(expense);
   })
 
-  .get('/total-spent', async c => {
+  .get('/total-spent', getUser, async c => {
     const total = fakeExpenses.reduce((acc, expense) => acc + expense.amount, 0);
     return c.json({ total });
   })
 
-  .get('/:id{[0-9]+}', c => {
+  .get('/:id{[0-9]+}', getUser, c => {
     const id = Number.parseInt(c.req.param('id'));
     const expense = fakeExpenses.find(expense => expense.id === id);
     if (!expense) {

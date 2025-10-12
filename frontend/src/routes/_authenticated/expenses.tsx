@@ -12,7 +12,7 @@ import { api } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from "@/components/ui/skeleton"
 
-export const Route = createFileRoute('/expenses')({
+export const Route = createFileRoute('/_authenticated/expenses')({
   component: Expenses,
 });
 
@@ -48,7 +48,7 @@ function Expenses() {
         <TableBody>
           {isPending ? (
             // スケルトンローディング表示
-            Array(3).fill(0).map((_, i) => (
+            (Array(3).fill(0).map((_, i) => (
               <TableRow key={i}>
                 <TableCell>
                   <Skeleton className="h-4 w-8" />
@@ -60,19 +60,19 @@ function Expenses() {
                   <Skeleton className="h-4 w-16" />
                 </TableCell>
               </TableRow>
-            ))
+            )))
           ) : (
             // 実際のデータ表示
-            data?.expenses?.map((expense) => (
+            (data?.expenses?.map((expense) => (
               <TableRow key={expense.id}>
                 <TableCell className="font-medium">{expense.id}</TableCell>
                 <TableCell>{expense.title}</TableCell>
                 <TableCell>${expense.amount}</TableCell>
               </TableRow>
-            ))
+            )))
           )}
         </TableBody>
       </Table>
     </div>
-  );
+  )
 }
