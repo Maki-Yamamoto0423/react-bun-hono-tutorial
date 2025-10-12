@@ -17,7 +17,7 @@ primary_region = "nrt"  # 東京リージョン
 
 [[http_service.checks]]
   method = "get"
-  path = "/api/expenses/total-spent"
+  path = "/"
   interval = "30s"
   timeout = "10s"
   grace_period = "5s"
