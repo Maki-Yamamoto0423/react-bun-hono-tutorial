@@ -1,21 +1,10 @@
 import { Hono } from 'hono'; // Webフレームワーク
 import { zValidator } from '@hono/zod-validator'; // バリデーター
-import { z } from 'zod'; // スキーマ検証ライブラリ
 import { getUser } from '../kinde';
 import { db } from '../db';
-import { expenses as expensesTable } from '../db/schema/expenses';
+import { expenses as expensesTable, insertExpensesSchema } from '../db/schema/expenses';
 import { eq, desc, sum, and } from 'drizzle-orm';
-
-const expenseSchema = z.object({
-  id: z.number().int().positive().min(1), // 支出ID
-  title: z.string().min(3).max(100), // 支出タイトル
-  amount: z.string(), //　金額
-});
-
-// ZodスキーマからTypeScriptの型を生成
-type Expense = z.infer<typeof expenseSchema>;
-
-const createPostSchema = expenseSchema.omit({ id: true });
+import { createExpenseSchema } from '../sharedTypes';
 
 export const expensesRoute = new Hono()
   // GET：支出一覧取得　全ての支出データを JSON で返す
@@ -31,9 +20,14 @@ export const expensesRoute = new Hono()
     return c.json({ expenses: expenses });
   })
   // POST：新しい支出作成
-  .post('/', getUser, zValidator('json', createPostSchema), async c => {
+  .post('/', getUser, zValidator('json', createExpenseSchema), async c => {
     const expense = await c.req.valid('json');
     const user = c.var.user;
+
+    const validatedExpense = insertExpensesSchema.parse({
+      ...expense,
+      userId: user.id,
+    });
 
     const result = await db
       .insert(expensesTable)
