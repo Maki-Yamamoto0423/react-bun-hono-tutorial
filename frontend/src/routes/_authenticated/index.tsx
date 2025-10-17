@@ -30,7 +30,7 @@ function Index() {
         <CardTitle>Total Spent</CardTitle>
         <CardDescription>The total amount you've spent</CardDescription>
       </CardHeader>
-      <CardContent>{isPending ? 'Loading...' : `$${data?.total || 0}`}</CardContent>
+      <CardContent>{isPending ? 'Loading...' : `$${data?.result?.total || '0.00'}`}</CardContent>
     </Card>
   );
 }

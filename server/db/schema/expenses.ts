@@ -12,7 +12,13 @@ import {
   date,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import z from 'zod';
+import { z } from 'zod';
+import type {
+  ExpensesResponse,
+  ExpenseResponse,
+  TotalSpentResponse,
+  ExpenseType,
+} from '../../sharedTypes';
 
 export const expenses = pgTable(
   'expenses',
@@ -31,6 +37,7 @@ export const expenses = pgTable(
   }
 );
 
+// INSERT用スキーマ（バリデーション付き）
 export const insertExpensesSchema = createInsertSchema(expenses, {
   title: z
     .string()
@@ -40,4 +47,14 @@ export const insertExpensesSchema = createInsertSchema(expenses, {
     .string()
     .regex(/^\d+(\.\d{1,2})?$/, { message: 'Amount must be a valid monetary value' }),
 });
-export const selectExpensesSchema = createInsertSchema(expenses);
+
+// SELECT用スキーマ
+export const selectExpensesSchema = createSelectSchema(expenses);
+
+// TypeScript型を自動生成・エクスポート
+export type Expense = typeof expenses.$inferSelect; // SELECT用型
+export type NewExpense = typeof expenses.$inferInsert; // INSERT用型
+
+// Zodスキーマから推論される型もエクスポート
+export type InsertExpenseType = z.infer<typeof insertExpensesSchema>;
+export type SelectExpenseType = z.infer<typeof selectExpensesSchema>;

@@ -11,6 +11,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { api } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
+import type { ExpenseType } from '@server/sharedTypes';
 
 export const Route = createFileRoute('/_authenticated/expenses')({
   component: Expenses,
@@ -68,12 +69,12 @@ function Expenses() {
                   </TableRow>
                 ))
             : // 実際のデータ表示
-              data?.expenses?.map(expense => (
+              data?.expenses?.map((expense: ExpenseType) => (
                 <TableRow key={expense.id}>
                   <TableCell className="font-medium">{expense.id}</TableCell>
                   <TableCell>{expense.title}</TableCell>
                   <TableCell>${expense.amount}</TableCell>
-                  <TableCell>{expense.date.split('T')[0]}</TableCell>
+                  <TableCell>{expense.date}</TableCell>
                 </TableRow>
               ))}
         </TableBody>
