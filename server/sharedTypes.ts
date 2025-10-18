@@ -6,6 +6,7 @@ import { z } from 'zod';
 export const createExpenseSchema = insertExpensesSchema.omit({
   userId: true,
   createdAt: true,
+  id: true,
 });
 
 // 型エクスポート（完璧な型安全）
@@ -26,3 +27,5 @@ export type TotalSpentResponse = {
     total: string | null;
   };
 };
+
+export type CreateExpense = z.infer<typeof createExpenseSchema>;

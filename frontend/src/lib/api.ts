@@ -1,6 +1,8 @@
 import { type ApiRoutes } from '@server/app';
 import { hc } from 'hono/client';
 import { queryOptions } from '@tanstack/react-query';
+import { type CreateExpense } from '@server/sharedTypes';
+type CreateExpense
 
 const client = hc<ApiRoutes>('/');
 
@@ -20,3 +22,29 @@ export const userQueryOptions = queryOptions({
   queryFn: getCurrentUser,
   staleTime: Infinity,
 });
+
+export async function getAllExpenses() {
+  await new Promise(r => setTimeout(r, 3000));
+  const res = await api.expenses.$get();
+  if (!res.ok) {
+    throw new Error('server error');
+  }
+  const data = await res.json();
+  return data;
+}
+
+export const getAllExpensesQueryOptions = queryOptions({
+  queryKey: ['get-all-expenses'],
+  queryFn: getAllExpenses,
+  staleTime: 1000 * 60 * 5,
+});
+
+export async function createExpense({value}:{value: CreateExpense}){
+  const res = await api.expenses.$post({json: value});
+  if(!res.ok){
+    throw ner Error("sever error");
+  }
+
+
+const newExpense = await res.json();
+return newExpense

@@ -8,7 +8,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { createFileRoute } from '@tanstack/react-router';
-import { api } from '@/lib/api';
+import { getAllExpensesQueryOptions } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ExpenseType } from '@server/sharedTypes';
@@ -17,26 +17,17 @@ export const Route = createFileRoute('/_authenticated/expenses')({
   component: Expenses,
 });
 
-async function getAllExpenses() {
-  await new Promise(r => setTimeout(r, 3000));
-  const res = await api.expenses.$get();
-  if (!res.ok) {
-    throw new Error('server error');
-  }
-  const data = await res.json();
-  return data;
-}
-
 function Expenses() {
-  const { isPending, error, data } = useQuery({
-    queryKey: ['get-all-expenses'],
-    queryFn: getAllExpenses,
+  const { isPending, error, data } = useQuery(getAllExpensesQueryOptions);
+  const { data } = useQuery({
+    queryKey: ['loading-create-expense'],
   });
 
   if (error) return 'An error has occurred: ' + error.message;
 
   return (
     <div className="m-auto max-w-3xl p-2">
+      {JSON.stringify(loadingCreateExpense)}
       <Table>
         <TableCaption>A list of all your expenses.</TableCaption>
         <TableHeader>

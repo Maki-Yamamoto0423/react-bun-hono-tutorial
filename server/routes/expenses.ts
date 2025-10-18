@@ -31,11 +31,9 @@ export const expensesRoute = new Hono()
 
     const result = await db
       .insert(expensesTable)
-      .values({
-        ...expense,
-        userId: user.id,
-      })
-      .returning();
+      .values(validatedExpense)
+      .returning()
+      .then(res => res[0]);
 
     c.status(201);
     return c.json(result);
