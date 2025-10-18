@@ -19,7 +19,7 @@ export const Route = createFileRoute('/_authenticated/expenses')({
 
 function Expenses() {
   const { isPending, error, data } = useQuery(getAllExpensesQueryOptions);
-  const { data } = useQuery({
+  const { data: loadingCreateExpense } = useQuery({
     queryKey: ['loading-create-expense'],
   });
 

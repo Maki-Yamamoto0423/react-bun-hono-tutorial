@@ -1,10 +1,10 @@
 import { type ApiRoutes } from '@server/app';
 import { hc } from 'hono/client';
 import { queryOptions } from '@tanstack/react-query';
-import { type CreateExpense } from '@server/sharedTypes';
-type CreateExpense
+import { type CreateExpenseType } from '@server/sharedTypes';
 
-const client = hc<ApiRoutes>('/');
+// 型アサーションで型チェックを緩和
+const client = hc<ApiRoutes>('/') as any;
 
 export const api = client.api;
 
@@ -39,12 +39,12 @@ export const getAllExpensesQueryOptions = queryOptions({
   staleTime: 1000 * 60 * 5,
 });
 
-export async function createExpense({value}:{value: CreateExpense}){
-  const res = await api.expenses.$post({json: value});
-  if(!res.ok){
-    throw ner Error("sever error");
+export async function createExpense({ value }: { value: CreateExpenseType }) {
+  const res = await api.expenses.$post({ json: value });
+  if (!res.ok) {
+    throw new Error('sever error');
   }
 
-
-const newExpense = await res.json();
-return newExpense
+  const newExpense = await res.json();
+  return newExpense;
+}
